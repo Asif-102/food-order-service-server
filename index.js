@@ -40,7 +40,7 @@ client.connect(err => {
     if (newFood.imageURL !== null) {
       foodCollection.insertOne(newFood)
         .then(result => {
-          console.log('inserted count ', result.insertedCount)
+          // console.log('inserted count ', result.insertedCount)
           res.send(result.insertedCount > 0)
         })
     }
@@ -51,7 +51,7 @@ client.connect(err => {
 
   app.delete('/deleteFood/:id',(req, res)=>{
     const id = ObjectID(req.params.id);
-    console.log('delete this ', id);
+    // console.log('delete this ', id);
     foodCollection.findOneAndDelete({_id: id})
     .then(documents => res.send(!!documents.value))
   })
