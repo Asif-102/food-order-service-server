@@ -22,6 +22,7 @@ app.get('/', (req, res) => {
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
 client.connect(err => {
   const foodCollection = client.db(process.env.DB_NAME).collection("foods");
+  const foodOrders = client.db(process.env.DB_NAME).collection("orders");
 
 
   app.get('/foods', (req, res) => {
@@ -49,6 +50,15 @@ client.connect(err => {
     }
   })
 
+  app.post('/checkOut',(req,res) =>{
+      const order = req.body;
+      foodOrders.insertOne(order)
+      .then(result =>{
+        res.send(result.insertedCount > 0)
+      })
+  })
+
+
   app.delete('/deleteFood/:id',(req, res)=>{
     const id = ObjectID(req.params.id);
     // console.log('delete this ', id);
@@ -57,6 +67,22 @@ client.connect(err => {
   })
 
 
+  app.get('/buy',(req,res)=>{
+    // console.log(req.query._id);
+    const id = ObjectID(req.query._id)
+    foodCollection.find({_id: id})
+    .toArray((err, documents) =>{
+      res.send(documents);
+    })
+  })
+
+  app.get('/orders',(req,res)=>{
+    const email = req.query.email
+    foodOrders.find({email:email})
+    .toArray((err, documents)=>{
+      res.send(documents)
+    })
+  })
 
 
 
